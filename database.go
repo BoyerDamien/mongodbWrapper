@@ -12,8 +12,8 @@ type Database interface {
 	InsertMany(string, []interface{}) (*mongo.InsertManyResult, error)
 	DeleteOne(string, interface{}) (*mongo.DeleteResult, error)
 	DeleteMany(string, []interface{}) (*mongo.DeleteResult, error)
-	FindOne(string, interface{}, interface{}) error
-	FindMany(string, interface{}, interface{}, []interface{}) error
+	FindOne(string, interface{}) *mongo.SingleResult
+	FindMany(string, interface{}) (*mongo.Cursor, error)
 }
 
 type DatabaseInfo struct {
@@ -39,30 +39,12 @@ func (v *DatabaseInfo) DeleteMany(collections string, documents []interface{}) (
 	return v.collections[collections].DeleteMany(v.ctx, documents)
 }
 
-func (v *DatabaseInfo) FindOne(collections string, filter interface{}, model interface{}) error {
-	result := v.collections[collections].FindOne(v.ctx, filter)
-	if result.Err() != nil {
-		return result.Err()
-	}
-	if err := result.Decode(model); err != nil {
-		return err
-	}
-	return nil
+func (v *DatabaseInfo) FindOne(collections string, filter interface{}) *mongo.SingleResult {
+	return v.collections[collections].FindOne(v.ctx, filter)
 }
 
-func (v *DatabaseInfo) FindMany(collections string, filter interface{}, model interface{}, results []interface{}) error {
-	cur, err := v.collections[collections].Find(v.ctx, filter)
-	if err != nil {
-		return err
-	}
-	for cur.Next(v.ctx) {
-		err = cur.Decode(model)
-		if err != nil {
-			return err
-		}
-		results = append(results, model)
-	}
-	return nil
+func (v *DatabaseInfo) FindMany(collections string, filter interface{}) (*mongo.Cursor, error) {
+	return v.collections[collections].Find(v.ctx, filter)
 }
 
 func (v *DatabaseInfo) AddCollections(collections ...string) {
