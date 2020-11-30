@@ -11,6 +11,8 @@ import (
 type Wrapper interface {
 	Init(URI string) error
 	GetDatabase(name string) Database
+	DatabaseNumber() int
+	Close()
 }
 
 // The wrapper structure
@@ -18,12 +20,12 @@ type WrapperData struct {
 	client    *mongo.Client
 	Ctx       context.Context
 	databases map[string]Database
-	Cancel    context.CancelFunc
+	cancel    context.CancelFunc
 }
 
 // This method will:
 //	- Create a mongodb client
-//	- Create a context and its cancel function -> don't forget to use "defer (*Wrapper).Cancel()"
+//	- Create a context and its cancel function -> don't forget to use "defer (*Wrapper).Close()"
 //	- Test the connection with the database
 // If somthing goes wrong, an error will be returned
 func (v *WrapperData) Init(URI string) error {
@@ -32,7 +34,7 @@ func (v *WrapperData) Init(URI string) error {
 	if err != nil {
 		return err
 	}
-	v.Ctx, v.Cancel = context.WithTimeout(context.Background(), 10*time.Second)
+	v.Ctx, v.cancel = context.WithTimeout(context.Background(), 10*time.Second)
 	if err := v.client.Connect(v.Ctx); err != nil {
 		return err
 	}
@@ -57,4 +59,12 @@ func (v *WrapperData) GetDatabase(name string) Database {
 		}
 	}
 	return v.databases[name]
+}
+
+func (v *WrapperData) DatabaseNumber() int {
+	return len(v.databases)
+}
+
+func (v *WrapperData) Close() {
+	v.cancel()
 }
