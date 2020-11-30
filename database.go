@@ -50,20 +50,19 @@ func (v *DatabaseInfo) FindOne(collections string, filter interface{}, model int
 	return nil
 }
 
-func (v *DatabaseInfo) FindMany(collections string, filter interface{}, model interface{}) ([]interface{}, error) {
-	var results []interface{}
+func (v *DatabaseInfo) FindMany(collections string, filter interface{}, model interface{}, results []interface{}) error {
 	cur, err := v.collections[collections].Find(v.ctx, filter)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	for cur.Next(v.ctx) {
 		err = cur.Decode(model)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		results = append(results, model)
 	}
-	return results, nil
+	return nil
 }
 
 func (v *DatabaseInfo) AddCollections(collections ...string) {
