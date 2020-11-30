@@ -13,7 +13,7 @@ type Database interface {
 	InsertMany(string, []interface{}) (*mongo.InsertManyResult, error)
 	DeleteOne(string, interface{}) (*mongo.DeleteResult, error)
 	DeleteMany(string, []interface{}) (*mongo.DeleteResult, error)
-	FindOne(string, interface{}, *interface{}) (interface{}, error)
+	FindOne(string, interface{}) (interface{}, error)
 	FindMany(string, *interface{}, *interface{}) ([]interface{}, error)
 }
 
@@ -40,9 +40,16 @@ func (v *DatabaseInfo) DeleteMany(collections string, documents []interface{}) (
 	return v.collections[collections].DeleteMany(v.ctx, documents)
 }
 
-func (v *DatabaseInfo) FindOne(collections string, filter interface{}, model *interface{}) (interface{}, error) {
+func (v *DatabaseInfo) FindOne(collections string, filter interface{}) (interface{}, error) {
+	var ret interface{}
 	result := v.collections[collections].FindOne(v.ctx, filter)
-	return model, result.Decode(model)
+	if result.Err() != nil {
+		return nil, result.Err()
+	}
+	if err := result.Decode(&ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
 }
 
 func (v *DatabaseInfo) FindMany(collections string, filter *interface{}, model *interface{}) ([]interface{}, error) {
