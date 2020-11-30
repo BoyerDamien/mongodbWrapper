@@ -14,6 +14,8 @@ type Database interface {
 	DeleteMany(string, []interface{}) (*mongo.DeleteResult, error)
 	FindOne(string, interface{}) *mongo.SingleResult
 	FindMany(string, interface{}) (*mongo.Cursor, error)
+	UpdateOne(string, interface{}, interface{}) (*mongo.UpdateResult, error)
+	UpdateMany(string, interface{}, interface{}) (*mongo.UpdateResult, error)
 }
 
 type DatabaseInfo struct {
@@ -45,6 +47,14 @@ func (v *DatabaseInfo) FindOne(collections string, filter interface{}) *mongo.Si
 
 func (v *DatabaseInfo) FindMany(collections string, filter interface{}) (*mongo.Cursor, error) {
 	return v.collections[collections].Find(v.Ctx, filter)
+}
+
+func (v *DatabaseInfo) UpdateOne(collections string, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
+	return v.collections[collections].UpdateOne(v.Ctx, filter, update)
+}
+
+func (v *DatabaseInfo) UpdateMany(collections string, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
+	return v.collections[collections].UpdateMany(v.Ctx, filter, update)
 }
 
 func (v *DatabaseInfo) AddCollections(collections ...string) {
