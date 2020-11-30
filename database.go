@@ -19,32 +19,32 @@ type Database interface {
 type DatabaseInfo struct {
 	name        string
 	collections map[string]*mongo.Collection
-	ctx         context.Context
+	Ctx         context.Context
 	database    *mongo.Database
 }
 
 func (v *DatabaseInfo) InsertOne(collections string, document interface{}) (*mongo.InsertOneResult, error) {
-	return v.collections[collections].InsertOne(v.ctx, document)
+	return v.collections[collections].InsertOne(v.Ctx, document)
 }
 
 func (v *DatabaseInfo) InsertMany(collections string, documents []interface{}) (*mongo.InsertManyResult, error) {
-	return v.collections[collections].InsertMany(v.ctx, documents)
+	return v.collections[collections].InsertMany(v.Ctx, documents)
 }
 
 func (v *DatabaseInfo) DeleteOne(collections string, document interface{}) (*mongo.DeleteResult, error) {
-	return v.collections[collections].DeleteOne(v.ctx, document)
+	return v.collections[collections].DeleteOne(v.Ctx, document)
 }
 
 func (v *DatabaseInfo) DeleteMany(collections string, documents []interface{}) (*mongo.DeleteResult, error) {
-	return v.collections[collections].DeleteMany(v.ctx, documents)
+	return v.collections[collections].DeleteMany(v.Ctx, documents)
 }
 
 func (v *DatabaseInfo) FindOne(collections string, filter interface{}) *mongo.SingleResult {
-	return v.collections[collections].FindOne(v.ctx, filter)
+	return v.collections[collections].FindOne(v.Ctx, filter)
 }
 
 func (v *DatabaseInfo) FindMany(collections string, filter interface{}) (*mongo.Cursor, error) {
-	return v.collections[collections].Find(v.ctx, filter)
+	return v.collections[collections].Find(v.Ctx, filter)
 }
 
 func (v *DatabaseInfo) AddCollections(collections ...string) {
