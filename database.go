@@ -13,7 +13,7 @@ type Database interface {
 	DeleteOne(string, interface{}) (*mongo.DeleteResult, error)
 	DeleteMany(string, []interface{}) (*mongo.DeleteResult, error)
 	FindOne(string, interface{}, interface{}) error
-	FindMany(string, interface{}, interface{}, interface{}) error
+	FindMany(string, interface{}, interface{}, []interface{}) error
 }
 
 type DatabaseInfo struct {
