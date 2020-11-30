@@ -2,7 +2,6 @@ package mongodbWrapper
 
 import (
 	"context"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -14,7 +13,7 @@ type Database interface {
 	DeleteOne(string, interface{}) (*mongo.DeleteResult, error)
 	DeleteMany(string, []interface{}) (*mongo.DeleteResult, error)
 	FindOne(string, interface{}, interface{}) error
-	FindMany(string, *interface{}, *interface{}) ([]interface{}, error)
+	FindMany(string, interface{}, interface{}) ([]interface{}, error)
 }
 
 type DatabaseInfo struct {
@@ -51,11 +50,8 @@ func (v *DatabaseInfo) FindOne(collections string, filter interface{}, model int
 	return nil
 }
 
-func (v *DatabaseInfo) FindMany(collections string, filter *interface{}, model *interface{}) ([]interface{}, error) {
+func (v *DatabaseInfo) FindMany(collections string, filter interface{}, model interface{}) ([]interface{}, error) {
 	var results []interface{}
-	if model != nil {
-		return nil, fmt.Errorf("Model must not be nil")
-	}
 	cur, err := v.collections[collections].Find(v.ctx, filter)
 	if err != nil {
 		return nil, err
@@ -65,7 +61,7 @@ func (v *DatabaseInfo) FindMany(collections string, filter *interface{}, model *
 		if err != nil {
 			return nil, err
 		}
-		results = append(results, *model)
+		results = append(results, model)
 	}
 	return results, nil
 }
