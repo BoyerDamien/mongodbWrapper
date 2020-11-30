@@ -2,7 +2,6 @@ package mongodbWrapper
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -10,7 +9,7 @@ import (
 )
 
 type Wrapper interface {
-	Init(URI string)
+	Init(URI string) error
 	GetDatabase(name string) Database
 }
 
@@ -21,21 +20,21 @@ type WrapperData struct {
 	Cancel    context.CancelFunc
 }
 
-func (v *WrapperData) Init(URI string) {
+func (v *WrapperData) Init(URI string) error {
 	var err error
 	v.client, err = mongo.NewClient(options.Client().ApplyURI(URI))
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	v.ctx, v.Cancel = context.WithTimeout(context.Background(), 10*time.Second)
 	if err := v.client.Connect(v.ctx); err != nil {
-		log.Fatal(err)
+		return err
 	}
 	if err := v.client.Ping(v.ctx, nil); err != nil {
-		log.Fatal(err)
+		return err
 	}
-	log.Printf("Successfully connected to %s\n", URI)
 	v.databases = make(map[string]Database)
+	return nil
 }
 
 func (v *WrapperData) GetDatabase(name string) Database {
