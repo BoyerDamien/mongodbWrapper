@@ -9,9 +9,23 @@ import (
 )
 
 type Wrapper interface {
+
+	// This method will:
+	//	- Create a mongodb client
+	//	- Create a context and its cancel function -> don't forget to use "defer (*Wrapper).Close()"
+	//	- Test the connection with the database
+	// If something went wrong, an error will be returned
 	Init(URI string) error
+
+	// This method will create a database and return an interface between it and your program
+	// If the database already exists, no new database will be created
+	// The interface will be always created
 	GetDatabase(name string) Database
+
+	// Return the number of databases that you added to the wrapper
 	DatabaseNumber() int
+
+	// Close the connection with the database
 	Close()
 }
 
@@ -23,11 +37,6 @@ type WrapperData struct {
 	cancel    context.CancelFunc
 }
 
-// This method will:
-//	- Create a mongodb client
-//	- Create a context and its cancel function -> don't forget to use "defer (*Wrapper).Close()"
-//	- Test the connection with the database
-// If somthing goes wrong, an error will be returned
 func (v *WrapperData) Init(URI string) error {
 	var err error
 	v.client, err = mongo.NewClient(options.Client().ApplyURI(URI))
@@ -45,9 +54,6 @@ func (v *WrapperData) Init(URI string) error {
 	return nil
 }
 
-// This method will create an a database and return an interface between it and your program
-// If the database already exists, no new database will be created
-// The interface will be always created
 func (v *WrapperData) GetDatabase(name string) Database {
 	_, ok := v.databases[name]
 	if !ok {
