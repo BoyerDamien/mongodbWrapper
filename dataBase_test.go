@@ -56,11 +56,11 @@ func Test_InsertOne(t *testing.T) {
 	if decoded.Age != testModel.Age || decoded.Name != testModel.Name {
 		t.Errorf("Error: db.FindOne() -> wrong result %v", decoded)
 	}
-	_, err = db.UpdateOne("coll1", decoded, bson.M{"$set": bson.M{"Name": "changed"}})
+	_, err = db.UpdateOne("coll1", decoded, bson.M{"$set": bson.M{"name": "changed"}})
 	if err != nil {
 		t.Errorf("Error: db.UpdateOne() -> %s", err)
 	}
-	_, err = db.DeleteOne("coll1", bson.M{"Name": "changed"})
+	_, err = db.DeleteOne("coll1", bson.M{"name": "changed"})
 	if err != nil {
 		t.Errorf("Error: db.DeleteOne() -> %s", err)
 	}
@@ -81,11 +81,11 @@ func Test_InserMany(t *testing.T) {
 	}
 
 	var decoded []Model
-	cur, err := db.FindMany("coll2", bson.M{})
+	cur, err := db.FindMany("coll2", bson.M{"name": "test"})
 	if err != nil {
 		t.Errorf("Error: db.FindMany() -> %s", err)
 	}
-	_, err = db.UpdateMany("coll2", bson.M{"Name": "test"}, bson.M{"$set": bson.M{"Name": "changed"}})
+	_, err = db.UpdateMany("coll2", bson.M{"name": "test"}, bson.M{"$set": bson.M{"name": "changed"}})
 	if err != nil {
 		t.Errorf("Error: db.UpdateMany() -> %s", err)
 	}
@@ -96,7 +96,7 @@ func Test_InserMany(t *testing.T) {
 		t.Errorf("Error: cur.All() -> wrong number of model finded: ok = %d -- ko: %d", 2, len(decoded))
 	}
 
-	_, err = db.DeleteMany("coll2", bson.M{"Name": "changed"})
+	_, err = db.DeleteMany("coll2", bson.M{"name": "changed"})
 	if err != nil {
 		t.Errorf("Error: db.DeleteMany() -> %s", err)
 	}
