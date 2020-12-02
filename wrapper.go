@@ -44,7 +44,7 @@ type Wrapper interface {
 // The wrapper structure
 type WrapperData struct {
 	client    *mongo.Client
-	Ctx       context.Context
+	ctx       context.Context
 	databases map[string]Database
 	cancel    context.CancelFunc
 }
@@ -55,11 +55,11 @@ func (v *WrapperData) Init(URI string) error {
 	if err != nil {
 		return err
 	}
-	v.Ctx, v.cancel = context.WithTimeout(context.Background(), 10*time.Second)
-	if err := v.client.Connect(v.Ctx); err != nil {
+	v.ctx, v.cancel = context.WithTimeout(context.Background(), 10*time.Second)
+	if err := v.client.Connect(v.ctx); err != nil {
 		return err
 	}
-	if err := v.client.Ping(v.Ctx, nil); err != nil {
+	if err := v.client.Ping(v.ctx, nil); err != nil {
 		return err
 	}
 	v.databases = make(map[string]Database)
@@ -72,7 +72,7 @@ func (v *WrapperData) GetDatabase(name string) Database {
 		v.databases[name] = &DatabaseInfo{
 			name,
 			make(map[string]*mongo.Collection),
-			v.Ctx,
+			v.ctx,
 			v.client.Database(name),
 		}
 	}

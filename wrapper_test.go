@@ -9,6 +9,7 @@ var wrapper Wrapper = &WrapperData{}
 
 func Test_Init_Good_URI(t *testing.T) {
 	got := wrapper.Init("mongodb://localhost:27017")
+	defer wrapper.Close()
 	if got != nil {
 		t.Errorf("Error: wrapper.Init(URI) -> uri = mongodb://localhost:27017")
 	}
@@ -16,6 +17,7 @@ func Test_Init_Good_URI(t *testing.T) {
 
 func Test_Init_Wrong_Uri(t *testing.T) {
 	got := wrapper.Init("wrong")
+	defer wrapper.Close()
 	if got != nil {
 		return
 	}
