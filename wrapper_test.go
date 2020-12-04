@@ -21,7 +21,7 @@ func Test_Init_Wrong_Uri(t *testing.T) {
 	if got != nil {
 		return
 	}
-	t.Errorf("Error: wrapper.Init(WRON URI) -> uri = wrong")
+	t.Errorf("Error: wrapper.Init(WRONG URI) -> uri = wrong")
 }
 
 func Test_GetDataBase(t *testing.T) {
