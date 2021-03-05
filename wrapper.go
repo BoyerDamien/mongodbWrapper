@@ -1,4 +1,4 @@
-package mongodbWrapper
+package mongodbwrapper
 
 import (
 	"context"
@@ -14,6 +14,7 @@ import (
 *
 *******************************************************************************************************/
 
+// Wrapper interface
 type Wrapper interface {
 
 	// This method will:
@@ -21,7 +22,7 @@ type Wrapper interface {
 	//	- Create a context and its cancel function -> don't forget to use "defer (*Wrapper).Close()"
 	//	- Test the connection with the database
 	// If something went wrong, an error will be returned
-	Init(URI string) error
+	Init(URI string, credentials options.Credential) error
 
 	// This method will create a database and return an interface between it and your program
 	// If the database already exists, no new database will be created
@@ -41,7 +42,7 @@ type Wrapper interface {
 *
 *******************************************************************************************************/
 
-// The wrapper structure
+// WrapperData structure
 type WrapperData struct {
 	client    *mongo.Client
 	ctx       context.Context
@@ -49,9 +50,10 @@ type WrapperData struct {
 	cancel    context.CancelFunc
 }
 
-func (v *WrapperData) Init(URI string) error {
+// Init methods init db connection
+func (v *WrapperData) Init(URI string, credentials options.Credential) error {
 	var err error
-	v.client, err = mongo.NewClient(options.Client().ApplyURI(URI))
+	v.client, err = mongo.NewClient(options.Client().ApplyURI(URI).SetAuth(credentials))
 	if err != nil {
 		return err
 	}
@@ -66,6 +68,7 @@ func (v *WrapperData) Init(URI string) error {
 	return nil
 }
 
+// GetDatabase returns or create a db form a name if not already exists
 func (v *WrapperData) GetDatabase(name string) Database {
 	_, ok := v.databases[name]
 	if !ok {
@@ -79,10 +82,12 @@ func (v *WrapperData) GetDatabase(name string) Database {
 	return v.databases[name]
 }
 
+// DatabaseNumber return the number of db stored
 func (v *WrapperData) DatabaseNumber() int {
 	return len(v.databases)
 }
 
+// Close close db connection
 func (v *WrapperData) Close() {
 	v.cancel()
 }

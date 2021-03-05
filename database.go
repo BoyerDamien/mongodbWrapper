@@ -1,4 +1,4 @@
-package mongodbWrapper
+package mongodbwrapper
 
 import (
 	"context"

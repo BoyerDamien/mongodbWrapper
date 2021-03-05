@@ -1,4 +1,4 @@
-package mongodbWrapper
+package mongodbwrapper
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ type Model struct {
 }
 
 func Test_AddCollection(t *testing.T) {
-	if err := wrapper.Init("mongodb://localhost:27017"); err != nil {
+	if err := wrapper.Init("mongodb://localhost:27017", credentials); err != nil {
 		t.Errorf("Error: wrapper.Init(URI) -> uri = mongodb://localhost:27017: %s", err)
 	}
 	defer wrapper.Close()
@@ -34,7 +34,7 @@ func Test_AddCollection(t *testing.T) {
 }
 
 func Test_InsertOne(t *testing.T) {
-	if err := wrapper.Init("mongodb://localhost:27017"); err != nil {
+	if err := wrapper.Init("mongodb://localhost:27017", credentials); err != nil {
 		t.Errorf("Error: wrapper.Init(URI) -> uri = mongodb://localhost:27017: %s", err)
 	}
 	defer wrapper.Close()
@@ -67,7 +67,7 @@ func Test_InsertOne(t *testing.T) {
 }
 
 func Test_InserMany(t *testing.T) {
-	if err := wrapper.Init("mongodb://localhost:27017"); err != nil {
+	if err := wrapper.Init("mongodb://localhost:27017", credentials); err != nil {
 		t.Errorf("Error: wrapper.Init(URI) -> uri = mongodb://localhost:27017: %s", err)
 	}
 	defer wrapper.Close()
