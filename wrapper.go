@@ -89,4 +89,5 @@ func (v *WrapperData) DatabaseNumber() int {
 // Close close db connection
 func (v *WrapperData) Close() {
 	v.cancel()
+	v.client.Disconnect(v.ctx)
 }
