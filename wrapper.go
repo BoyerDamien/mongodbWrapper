@@ -2,7 +2,6 @@ package mongodbwrapper
 
 import (
 	"context"
-	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -57,7 +56,7 @@ func (v *WrapperData) Init(URI string, credentials options.Credential) error {
 	if err != nil {
 		return err
 	}
-	v.ctx, v.cancel = context.WithTimeout(context.Background(), 10*time.Second)
+	v.ctx, v.cancel = context.WithCancel(context.Background())
 	if err := v.client.Connect(v.ctx); err != nil {
 		return err
 	}
